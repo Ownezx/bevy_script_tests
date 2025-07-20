@@ -4,9 +4,12 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-bevy = { version = "0.15.3", features = ["dynamic_linking"] }
-log = { version = "*", features = ["max_level_debug", "release_max_level_warn"] }
-bevy_mod_scripting = { version = "0.13.0", features = ["luajit"]}
+bevy = { version = "0.15.3", features = ["dynamic_linking", "file_watcher"] }
+log = { version = "*", features = [
+    "max_level_debug",
+    "release_max_level_warn",
+] }
+bevy_mod_scripting = { version = "0.13.0", features = ["luajit"] }
 
 
 # Enable a small amount of optimization in the dev profile.

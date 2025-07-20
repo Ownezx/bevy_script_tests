@@ -10,6 +10,8 @@ use bevy_mod_scripting::core::{
 };
 use bevy_mod_scripting::lua::LuaScriptingPlugin;
 
+mod components;
+
 #[derive(Debug, Resource, Default)]
 pub struct LoadedScripts(pub Vec<Handle<ScriptAsset>>);
 
@@ -20,11 +22,15 @@ pub fn load_script_assets(
 ) {
     loaded_scripts
         .0
-        .extend(vec![asset_server.load("scripts/test.lua")]);
+        .extend(vec![asset_server.load("scripts/mainSettings.lua")]);
+    loaded_scripts
+        .0
+        .extend(vec![asset_server.load("scripts/clickFunction.lua")]);
 }
 
 fn spawn_loaded_scripts(mut commands: Commands, loaded_scripts: Res<LoadedScripts>) {
-    commands.spawn(ScriptComponent::new(vec!["scripts/test.lua"]));
+    commands.spawn(ScriptComponent::new(vec!["scripts/clickFunction.lua"]));
+    commands.spawn(ScriptComponent::new(vec!["scripts/mainSettings.lua"]));
 }
 
 // define the label, you can define as many as you like here
