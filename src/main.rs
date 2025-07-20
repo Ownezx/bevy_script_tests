@@ -28,7 +28,7 @@ pub fn load_script_assets(
         .extend(vec![asset_server.load("scripts/clickFunction.lua")]);
 }
 
-fn spawn_loaded_scripts(mut commands: Commands, loaded_scripts: Res<LoadedScripts>) {
+fn spawn_loaded_scripts(mut commands: Commands) {
     commands.spawn(ScriptComponent::new(vec!["scripts/clickFunction.lua"]));
     commands.spawn(ScriptComponent::new(vec!["scripts/mainSettings.lua"]));
 }
