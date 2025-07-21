@@ -1,2 +1,2 @@
-mod sensor_trace;
+pub mod sensor_trace;
 pub mod subsystem_sensor;

@@ -1,5 +1,5 @@
 use bevy::prelude::*;
-use bevy::reflect::{FromReflect, Reflect};
+use bevy::reflect::Reflect;
 
 #[derive(Component, Reflect, Default)]
 #[reflect(Component)]
