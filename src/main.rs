@@ -11,6 +11,7 @@ use bevy_mod_scripting::core::{
 use bevy_mod_scripting::lua::LuaScriptingPlugin;
 
 mod components;
+use crate::components::subsystem_sensor::SubsystemSensor;
 
 #[derive(Debug, Resource, Default)]
 pub struct LoadedScripts(pub Vec<Handle<ScriptAsset>>);
@@ -20,17 +21,17 @@ pub fn load_script_assets(
     asset_server: Res<AssetServer>,
     mut loaded_scripts: ResMut<LoadedScripts>,
 ) {
-    loaded_scripts
-        .0
-        .extend(vec![asset_server.load("scripts/mainSettings.lua")]);
-    loaded_scripts
-        .0
-        .extend(vec![asset_server.load("scripts/clickFunction.lua")]);
+    loaded_scripts.0.extend(vec![
+        asset_server.load("scripts/mainSettings.lua"),
+        asset_server.load("scripts/clickFunction.lua"),
+        asset_server.load("scenarios/test.lua"),
+    ]);
 }
 
 fn spawn_loaded_scripts(mut commands: Commands) {
     commands.spawn(ScriptComponent::new(vec!["scripts/clickFunction.lua"]));
     commands.spawn(ScriptComponent::new(vec!["scripts/mainSettings.lua"]));
+    commands.spawn(ScriptComponent::new(vec!["scenarios/test.lua"]));
 }
 
 // define the label, you can define as many as you like here
@@ -39,6 +40,7 @@ callback_labels!(
 );
 
 pub fn send_on_click(
+    mut commands: Commands,
     buttons: Res<ButtonInput<MouseButton>>,
     q_windows: Query<&Window, With<PrimaryWindow>>,
     mut events: EventWriter<ScriptCallbackEvent>,
@@ -78,6 +80,8 @@ fn main() {
         Update,
         event_handler::<OnClick, LuaScriptingPlugin>.after(send_on_click),
     );
+
+    app.register_type::<SubsystemSensor>();
 
     app.add_plugins(BMSPlugin);
 
