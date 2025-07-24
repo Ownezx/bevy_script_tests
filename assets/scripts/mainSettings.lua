@@ -1,4 +1,4 @@
-data = 2;
+local data = 2;
 
 function on_script_reloaded(value)
     if value then

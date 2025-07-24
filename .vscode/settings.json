@@ -1,5 +1,7 @@
 {
-    "Lua.diagnostics.disable": [
-        "lowercase-global"
-    ]
+  "Lua.diagnostics.disable": ["lowercase-global"],
+  "luau-lsp.platform.type": "standard",
+  "luau-lsp.types.robloxSecurityLevel": "None",
+  "luau-lsp.sourcemap.enabled": false,
+  "luau-lsp.sourcemap.autogenerate": false
 }

@@ -9,7 +9,7 @@ log = { version = "*", features = [
     "max_level_debug",
     "release_max_level_warn",
 ] }
-bevy_mod_scripting = { version = "0.13.0", features = ["luajit"] }
+bevy_mod_scripting = { version = "0.13.0", features = ["luau","unsafe_lua_modules"] }
 
 
 # Enable a small amount of optimization in the dev profile.
