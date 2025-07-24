@@ -9,6 +9,8 @@ use bevy_mod_scripting::core::{
     event::ScriptCallbackEvent, handler::event_handler,
 };
 use bevy_mod_scripting::lua::LuaScriptingPlugin;
+use std::env;
+
 
 mod components;
 use crate::components::sensor_trace::SensorTrace;
@@ -78,7 +80,10 @@ fn setup_lua_package_path() {
     // Set package.path to exactly this folder + wildcard
     let new_path = format!("{}{}", assets_str, "/?.luau");
 
-    println!("Lua package.path set to: {}", new_path);
+    unsafe{
+        
+        env::set_var("LUA_PATH", new_path);
+    }
 }
 
 fn main() {

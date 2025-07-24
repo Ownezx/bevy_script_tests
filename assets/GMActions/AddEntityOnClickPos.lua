@@ -1,5 +1,5 @@
-local Template = require("../scripts/Template")
-local waarg = require("../scripts/FirstTemplates")
+local Template = require("scripts.Template")
+local waarg = require("scripts.FirstTemplates")
 
 
 
