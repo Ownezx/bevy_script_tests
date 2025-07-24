@@ -1,6 +1,6 @@
 {
 	"languageMode": "strict",
-	"lint": { "*": true, "LocalUnused": false },
+	"lint": { "*": true, "LocalUnused": false, "FunctionUnused": false },
 	"lintErrors": true,
 	"globals": ["world" , "construct", "types", "package"]
 }
