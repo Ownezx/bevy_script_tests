@@ -68,7 +68,8 @@ pub fn send_on_click(
     }
 }
 
-fn setup_lua_package_path() {
+fn main() {
+    // Set the LUA_PATH env variable
     let mut assets_path = std::env::current_dir().expect("Failed to get current dir");
     assets_path.push("assets");
 
@@ -77,16 +78,12 @@ fn setup_lua_package_path() {
         .expect("Failed to convert path to str")
         .replace("\\", "/");
 
-    // Set package.path to exactly this folder + wildcard
-    let new_path = format!("{}{}", assets_str, "/?.luau");
+    let luau_package_path = format!("{}{}", assets_str, "/?.luau");
 
     unsafe{
-        
-        env::set_var("LUA_PATH", new_path);
+        env::set_var("LUA_PATH", luau_package_path);
     }
-}
 
-fn main() {
     let mut app = App::new();
 
     app.add_plugins(DefaultPlugins.set(WindowPlugin {
@@ -100,7 +97,6 @@ fn main() {
     app.init_resource::<LoadedScripts>();
     app.add_systems(Startup, load_script_assets);
     app.add_systems(Startup, spawn_loaded_scripts.after(load_script_assets));
-    app.add_systems(Startup, setup_lua_package_path);
     app.add_systems(Update, send_on_click);
     app.add_systems(
         Update,
