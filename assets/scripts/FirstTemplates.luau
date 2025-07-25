@@ -4,13 +4,16 @@ type Template = Types.Template
 
 local simple: { [string]: Template } = 
 {
-    test1 = 
+    sensor = 
     {
-        name = "test1"
+        name = "sensor",
+        sensor = {noise_floor = 1, range = 10000},
+        sensor_trace = {size_x = 10, size_y = 10, biological = 1, gravitational = 1, electrical = 1}
     },
-    test2 = 
+    sensor_trace = 
     {
-        name = "test2"
+        name = "trace",
+        sensor_trace = {size_x = 10, size_y = 10, biological = 1, gravitational = 1, electrical = 1}
     }
 }
 

@@ -1,14 +1,8 @@
 --!strict
-
-local SubsystemSensor = types.SubsystemSensor
-local SensorTrace = types.SensorTrace
-local Transform = types.Transform
-
-
 local function spawnTemplate(template:Template, x:number, y:number, rotation:number?): number
     local entity = world.spawn()
 
-    local transform = construct(Transform, {})
+    local transform = construct(types.Transform, {})
     transform.translation.x = x;
     transform.translation.y = y;
     if rotation then
@@ -17,11 +11,13 @@ local function spawnTemplate(template:Template, x:number, y:number, rotation:num
     world.insert_component(entity, types.Transform, transform)
 
     if template.sensor then
-        world.insert_component(entity, types.SubsystemSensor, template.sensor)
+        local instance = construct(types.SubsystemSensor, template.sensor)
+        world.insert_component(entity, types.SubsystemSensor, instance)
     end
     
     if template.sensor_trace then
-        world.insert_component(entity, types.SensorTrace, template.sensor_trace)  
+        local instance = construct(types.SensorTrace, template.sensor_trace)
+        world.insert_component(entity, types.SensorTrace, instance)  
     end
 
     return entity
