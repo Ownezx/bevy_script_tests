@@ -1,5 +1,5 @@
-local Template = require("./../scripts/Template")
-local waarg = require("./../scripts/FirstTemplates")
+local Template = require("./../library/Template")
+local waarg = require("./../library/FirstTemplates")
 
 local is_first = true;
 

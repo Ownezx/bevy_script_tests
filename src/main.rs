@@ -25,20 +25,19 @@ pub fn load_script_assets(
     mut loaded_scripts: ResMut<LoadedScripts>,
 ) {
     loaded_scripts.0.extend(vec![
-        asset_server.load("scripts/mainSettings.lua"),
-        asset_server.load("scripts/Template.luau"),
-        asset_server.load("scripts/FirstTemplates.luau"),
-        asset_server.load("GMActions/AddEntityOnClickPos.lua"),
-        asset_server.load("scenarios/test.lua"),
+        asset_server.load("lua/library/mainSettings.lua"),
+        asset_server.load("lua/library/Template.luau"),
+        asset_server.load("lua/library/FirstTemplates.luau"),
+        asset_server.load("lua/GMActions/AddEntityOnClickPos.lua"),
+        asset_server.load("lua/scenarios/test.lua"),
     ]);
 }
 
 fn spawn_loaded_scripts(mut commands: Commands) {
     commands.spawn(ScriptComponent::new(vec![
-        "GMActions/AddEntityOnClickPos.lua",
-    ]));
-    commands.spawn(ScriptComponent::new(vec!["scripts/mainSettings.lua"]));
-    commands.spawn(ScriptComponent::new(vec!["scenarios/test.lua"]));
+        "lua/library/mainSettings.lua",
+        "lua/GMActions/AddEntityOnClickPos.lua",
+]));
 }
 
 // define the label, you can define as many as you like here
@@ -78,7 +77,7 @@ fn main() {
         .expect("Failed to convert path to str")
         .replace("\\", "/");
 
-    let luau_package_path = format!("{}{}", assets_str, "/?.luau");
+    let luau_package_path = format!("{}{}", assets_str, "/lua/?.luau");
 
     unsafe{
         env::set_var("LUA_PATH", luau_package_path);

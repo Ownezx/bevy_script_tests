@@ -1,5 +1,5 @@
 --!strict
-local Types = require("./../scripts/Template")
+local Types = require("./../library/Template")
 type Template = Types.Template
 
 local simple: { [string]: Template } = 

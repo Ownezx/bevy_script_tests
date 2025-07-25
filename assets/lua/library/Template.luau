@@ -19,7 +19,7 @@ local function spawnTemplate(template:Template, x:number, y:number, rotation:num
         local instance = construct(types.SensorTrace, template.sensor_trace)
         world.insert_component(entity, types.SensorTrace, instance)  
     end
-
+    
     return entity
 end
 
