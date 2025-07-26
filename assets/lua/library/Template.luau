@@ -40,7 +40,7 @@ export type Template = {
     name:string,
     sensor_trace:SensorTrace?,
     sensor:SubsystemSensor?,
+    map_icon:string?,
 }
-
 
 return {spawnTemplate = spawnTemplate}

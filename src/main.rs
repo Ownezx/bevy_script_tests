@@ -11,15 +11,15 @@ use bevy_mod_scripting::core::{
 use bevy_mod_scripting::lua::LuaScriptingPlugin;
 use std::env;
 
-
+mod plugins;
 mod components;
 use crate::components::sensor_trace::SensorTrace;
 use crate::components::subsystem_sensor::SubsystemSensor;
+use crate::plugins::map_icon_loader::MapIconLoader;
 
 #[derive(Debug, Resource, Default)]
 pub struct LoadedScripts(pub Vec<Handle<ScriptAsset>>);
 
-/// Prepares any scripts by loading them and storing the handles.
 pub fn load_script_assets(
     asset_server: Res<AssetServer>,
     mut loaded_scripts: ResMut<LoadedScripts>,
@@ -37,10 +37,9 @@ fn spawn_loaded_scripts(mut commands: Commands) {
     commands.spawn(ScriptComponent::new(vec![
         "lua/library/mainSettings.lua",
         "lua/GMActions/AddEntityOnClickPos.lua",
-]));
+    ]));
 }
 
-// define the label, you can define as many as you like here
 callback_labels!(
     OnClick => "on_click"
 );
@@ -65,6 +64,10 @@ pub fn send_on_click(
             ],
         ));
     }
+}
+
+fn setup_map_camera(mut commands: Commands) {
+    commands.spawn(Camera2d);
 }
 
 fn main() {
@@ -93,8 +96,10 @@ fn main() {
         }),
         ..default()
     }));
+
     app.init_resource::<LoadedScripts>();
     app.add_systems(Startup, load_script_assets);
+    app.add_systems(Startup, setup_map_camera);
     app.add_systems(Startup, spawn_loaded_scripts.after(load_script_assets));
     app.add_systems(Update, send_on_click);
     app.add_systems(
@@ -106,7 +111,7 @@ fn main() {
     app.register_type::<SensorTrace>();
 
     app.add_plugins(BMSPlugin);
-
+    app.add_plugins(MapIconLoader); 
 
     app.run();
 }
