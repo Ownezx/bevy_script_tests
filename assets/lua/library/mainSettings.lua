@@ -1,18 +1,5 @@
-local data = 2;
+settings = {}
 
-function on_script_reloaded(value)
-    if value then
-        data = value.data
-        print("Kept previous data " .. data .. ", " .. value.additionalData[3])
-    else
-        print('I have not saved any state before uretsnloading')
-    end
-end
-
-function on_script_unloaded()
-    print("Goodbye world")
-    local test = {}
-    test.data = data;
-    test.additionalData = { 3, 2, 1 };
-    return test
-end
+settings.GRID_CELL_SIZE = 100.0
+settings.GRID_WIDTH = 10
+settings.GRID_HEIGHT = 10

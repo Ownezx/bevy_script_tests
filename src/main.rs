@@ -13,7 +13,7 @@ use std::env;
 
 mod plugins;
 mod components;
-use crate::components::sensor_trace::SensorTrace;
+use crate::{components::sensor_trace::SensorTrace, plugins::map_grid::MapGrid};
 use crate::components::subsystem_sensor::SubsystemSensor;
 use crate::plugins::map_icon_loader::MapIconLoader;
 
@@ -118,6 +118,7 @@ fn main() {
 
     app.add_plugins(BMSPlugin);
     app.add_plugins(MapIconLoader); 
+    app.add_plugins(MapGrid); 
 
     app.run();
 }
