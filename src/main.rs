@@ -11,34 +11,14 @@ use bevy_mod_scripting::core::{
 use bevy_mod_scripting::lua::LuaScriptingPlugin;
 use std::env;
 
-mod plugins;
 mod components;
-use crate::{components::sensor_trace::SensorTrace, plugins::map_grid::MapGrid};
-use crate::components::subsystem_sensor::SubsystemSensor;
+mod plugins;
+use crate::{components::subsystem_sensor::SubsystemSensor, plugins::{game_settings::GameSettingsPlugin, scripting::ScriptPlugin}};
 use crate::plugins::map_icon_loader::MapIconLoader;
-
-#[derive(Debug, Resource, Default)]
-pub struct LoadedScripts(pub Vec<Handle<ScriptAsset>>);
-
-pub fn load_script_assets(
-    asset_server: Res<AssetServer>,
-    mut loaded_scripts: ResMut<LoadedScripts>,
-) {
-    loaded_scripts.0.extend(vec![
-        asset_server.load("lua/library/mainSettings.lua"),
-        asset_server.load("lua/library/Template.luau"),
-        asset_server.load("lua/library/FirstTemplates.luau"),
-        asset_server.load("lua/GMActions/AddEntityOnClickPos.lua"),
-        asset_server.load("lua/scenarios/test.lua"),
-    ]);
-}
-
-fn spawn_loaded_scripts(mut commands: Commands) {
-    commands.spawn(ScriptComponent::new(vec![
-        "lua/library/mainSettings.lua",
-        "lua/GMActions/AddEntityOnClickPos.lua",
-    ]));
-}
+use crate::{
+    components::sensor_trace::SensorTrace,
+    plugins::{ map_grid::MapGrid},
+};
 
 callback_labels!(
     OnClick => "on_click"
@@ -88,7 +68,7 @@ fn main() {
 
     let luau_package_path = format!("{}{}", assets_str, "/lua/?.luau");
 
-    unsafe{
+    unsafe {
         env::set_var("LUA_PATH", luau_package_path);
     }
 
@@ -103,10 +83,7 @@ fn main() {
         ..default()
     }));
 
-    app.init_resource::<LoadedScripts>();
-    app.add_systems(Startup, load_script_assets);
     app.add_systems(Startup, setup_map_camera);
-    app.add_systems(Startup, spawn_loaded_scripts.after(load_script_assets));
     app.add_systems(Update, send_on_click);
     app.add_systems(
         Update,
@@ -117,8 +94,10 @@ fn main() {
     app.register_type::<SensorTrace>();
 
     app.add_plugins(BMSPlugin);
-    app.add_plugins(MapIconLoader); 
-    app.add_plugins(MapGrid); 
+    app.add_plugins(MapIconLoader);
+    app.add_plugins(ScriptPlugin);
+    app.add_plugins(GameSettingsPlugin);
+    app.add_plugins(MapGrid);
 
     app.run();
 }
