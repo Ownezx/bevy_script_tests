@@ -2,5 +2,5 @@
 	"languageMode": "strict",
 	"lint": { "*": true, "FunctionUnused": false },
 	"lintErrors": true,
-	"globals": ["world" , "construct", "types", "package", "settings"]
+	"globals": ["world" , "construct", "types", "package"]
 }
