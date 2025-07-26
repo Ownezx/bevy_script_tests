@@ -67,7 +67,13 @@ pub fn send_on_click(
 }
 
 fn setup_map_camera(mut commands: Commands) {
-    commands.spawn(Camera2d);
+    commands.spawn(Camera2dBundle {
+        camera: Camera {
+            clear_color: ClearColorConfig::Custom(Color::BLACK),
+            ..default()
+        },
+        ..default()
+    });
 }
 
 fn main() {
