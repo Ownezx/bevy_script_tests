@@ -1,6 +1,5 @@
 use bevy::prelude::*;
 use bevy_prototype_lyon::prelude::*;
-use bevy::log::*;
 
 
 use crate::plugins::game_settings::GameSettings;
@@ -71,7 +70,7 @@ fn spawn_grid(commands: &mut Commands, settings: &GameSettings) {
             transform: Transform::from_translation(grid_offset),
             ..default()
         },
-        Stroke::new(Color::rgba(1.0, 1.0, 1.0, 0.2), 1.0),
+        Stroke::new(Color::srgba(1.0, 1.0, 1.0, 0.2), 1.0),
         Grid,
     ));
 }

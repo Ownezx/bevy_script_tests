@@ -1,10 +1,6 @@
 use bevy::prelude::*;
+use bevy_mod_scripting::core::asset::ScriptAsset;
 use bevy_mod_scripting::core::script::ScriptComponent;
-use bevy_mod_scripting::core::{
-    asset::ScriptAsset, bindings::script_value::ScriptValue, callback_labels,
-    event::ScriptCallbackEvent, handler::event_handler,
-};
-use bevy_mod_scripting::lua::LuaScriptingPlugin;
 
 #[derive(Debug, Resource, Default)]
 pub struct LoadedScripts(pub Vec<Handle<ScriptAsset>>);
@@ -17,12 +13,6 @@ impl Plugin for ScriptPlugin {
         app.add_systems(Startup, load_script_assets);
         app.add_systems(Startup, spawn_loaded_scripts.after(load_script_assets));
     }
-}
-
-fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
-    commands.spawn(Sprite::from_image(
-        asset_server.load("map_icons/corvette.png"),
-    ));
 }
 
 pub fn load_script_assets(

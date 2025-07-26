@@ -3,21 +3,20 @@ use bevy::{
     window::{PresentMode, PrimaryWindow},
 };
 use bevy_mod_scripting::BMSPlugin;
-use bevy_mod_scripting::core::script::ScriptComponent;
 use bevy_mod_scripting::core::{
-    asset::ScriptAsset, bindings::script_value::ScriptValue, callback_labels,
-    event::ScriptCallbackEvent, handler::event_handler,
+    bindings::script_value::ScriptValue, callback_labels, event::ScriptCallbackEvent,
+    handler::event_handler,
 };
 use bevy_mod_scripting::lua::LuaScriptingPlugin;
 use std::env;
 
 mod components;
 mod plugins;
-use crate::{components::subsystem_sensor::SubsystemSensor, plugins::{game_settings::GameSettingsPlugin, scripting::ScriptPlugin}};
 use crate::plugins::map_icon_loader::MapIconLoader;
+use crate::{components::sensor_trace::SensorTrace, plugins::map_grid::MapGrid};
 use crate::{
-    components::sensor_trace::SensorTrace,
-    plugins::{ map_grid::MapGrid},
+    components::subsystem_sensor::SubsystemSensor,
+    plugins::{game_settings::GameSettingsPlugin, scripting::ScriptPlugin},
 };
 
 callback_labels!(
@@ -25,7 +24,6 @@ callback_labels!(
 );
 
 pub fn send_on_click(
-    mut commands: Commands,
     buttons: Res<ButtonInput<MouseButton>>,
     q_windows: Query<&Window, With<PrimaryWindow>>,
     mut events: EventWriter<ScriptCallbackEvent>,
@@ -47,13 +45,15 @@ pub fn send_on_click(
 }
 
 fn setup_map_camera(mut commands: Commands) {
-    commands.spawn(Camera2dBundle {
-        camera: Camera {
+    commands.spawn((
+        Camera2d,
+        Camera {
             clear_color: ClearColorConfig::Custom(Color::BLACK),
             ..default()
         },
-        ..default()
-    });
+        Transform::default(),
+        GlobalTransform::default(),
+    ));
 }
 
 fn main() {
