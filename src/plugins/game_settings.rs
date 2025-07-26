@@ -5,9 +5,9 @@ use crate::plugins::scripting::LoadedScripts;
 
 #[derive(Resource, Default, Reflect)]
 pub struct GameSettings {
-    pub grid_cell_size: isize,
-    pub grid_width: f32,
-    pub grid_height: f32,
+    pub grid_cell_size: f32,
+    pub grid_width: isize,
+    pub grid_height: isize,
 }
 
 
