@@ -19,6 +19,10 @@ local function spawnTemplate(template:Template, x:number, y:number, rotation:num
         local instance = construct(types.SensorTrace, template.sensor_trace)
         world.insert_component(entity, types.SensorTrace, instance)  
     end
+
+    if template.map_icon then
+        add_sprite_to_entity(entity, template.map_icon)
+    end
     
     return entity
 end
