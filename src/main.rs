@@ -25,20 +25,27 @@ callback_labels!(
 
 pub fn send_on_click(
     buttons: Res<ButtonInput<MouseButton>>,
+    camera_query: Single<(&Camera, &GlobalTransform)>,
     q_windows: Query<&Window, With<PrimaryWindow>>,
     mut events: EventWriter<ScriptCallbackEvent>,
 ) {
     if buttons.just_pressed(MouseButton::Left) {
+        let (camera, camera_transform) = *camera_query;
         let window = q_windows.single();
-        let pos = window.cursor_position().unwrap_or_default();
-        let x = pos.x as u32;
-        let y = pos.y as u32;
-        info!("Bevy on clic");
+    
+        let Some(cursor_position) = window.cursor_position() else {
+            return;
+        };
+    
+        // Calculate a world position based on the cursor's position.
+        let Ok(world_pos) = camera.viewport_to_world_2d(camera_transform, cursor_position) else {
+            return;
+        };
         events.send(ScriptCallbackEvent::new_for_all(
             OnClick,
             vec![
-                ScriptValue::Integer(x as i64),
-                ScriptValue::Integer(y as i64),
+                ScriptValue::Integer(world_pos.x as i64),
+                ScriptValue::Integer(world_pos.y as i64),
             ],
         ));
     }
