@@ -1,5 +1,9 @@
 --!strict
 local function spawnTemplate(template:Template, x:number, y:number, rotation:number?): number
+    if not template then
+        error("spawnTemplate: Attempted to spawn nil template")
+    end
+
     local entity = world.spawn()
 
     local transform = construct(types.Transform, {})

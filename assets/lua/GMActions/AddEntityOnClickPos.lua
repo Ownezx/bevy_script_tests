@@ -1,16 +1,16 @@
 local Template = require("./../library/Template")
-local waarg = require("./../library/FirstTemplates")
+local waarg = require("./../templates/FirstTemplates")
 
 local is_first = true;
 
 function on_click(x, y)
     if is_first then
-        Template.spawnTemplate(waarg.sensor,x,y)
-        print("Entity ".. waarg.sensor.name .." at position: " .. x .. ", " .. y)
+        Template.spawnTemplate(waarg.cruiser,x,y)
+        print("Entity ".. waarg.cruiser.name .." at position: " .. x .. ", " .. y)
         is_first = false
     else
-        Template.spawnTemplate(waarg.sensor_trace,x,y)
-        print("Entity ".. waarg.sensor_trace.name .." at position: " .. x .. ", " .. y)
+        Template.spawnTemplate(waarg.corvette,x,y)
+        print("Entity ".. waarg.corvette.name .." at position: " .. x .. ", " .. y)
     end
 end
 
