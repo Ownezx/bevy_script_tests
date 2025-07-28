@@ -3,5 +3,6 @@
   "luau-lsp.platform.type": "standard",
   "luau-lsp.types.robloxSecurityLevel": "None",
   "luau-lsp.sourcemap.enabled": false,
-  "luau-lsp.sourcemap.autogenerate": false
+  "luau-lsp.sourcemap.autogenerate": false,
+  "luau-lsp.types.definitionFiles": ["assets/lua/library/globalTypes.d.luau"]
 }

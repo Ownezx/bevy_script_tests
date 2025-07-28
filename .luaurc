@@ -2,5 +2,5 @@
 	"languageMode": "strict",
 	"lint": { "*": true, "FunctionUnused": false },
 	"lintErrors": true,
-	"globals": ["world" , "construct", "types", "package", "add_sprite_to_entity"]
+	"globals": ["world" , "construct", "types", "package"]
 }
