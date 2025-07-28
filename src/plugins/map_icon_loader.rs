@@ -1,5 +1,4 @@
 use bevy::log::error;
-use bevy::log::info;
 use bevy::prelude::*;
 use bevy::utils::HashMap;
 use bevy_mod_scripting::core::bindings::{
@@ -25,7 +24,7 @@ impl Plugin for MapIconLoader {
     }
 }
 
-fn setup(mut icon_loaded: ResMut<IconLoaded>, asset_server: Res<AssetServer>) {
+fn setup(mut commands: Commands, mut icon_loaded: ResMut<IconLoaded>, asset_server: Res<AssetServer>) {
     icon_loaded.hash.insert(
         "corvette".to_string(),
         asset_server.load("map_icons/corvette.png"),
@@ -77,7 +76,6 @@ fn add_sprite_to_entity(ctx: FunctionCallContext, entity: Val<Entity>, icon: Str
         .unwrap()
         .unwrap();
 
-    info!("Spawning {icon} on entity {}.",*entity);
     let Ok(_) = world.insert_component(*entity, sprite_registration, sprite_reference) else {
         error!("Unable to insert map icon {icon} on entity {}.", *entity);
         return;

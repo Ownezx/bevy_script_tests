@@ -2,6 +2,7 @@ use bevy::{
     prelude::*,
     window::{PresentMode, PrimaryWindow},
 };
+use bevy_inspector_egui::quick::WorldInspectorPlugin;
 use bevy_mod_scripting::BMSPlugin;
 use bevy_mod_scripting::core::{
     bindings::script_value::ScriptValue, callback_labels, event::ScriptCallbackEvent,
@@ -89,6 +90,7 @@ fn main() {
         }),
         ..default()
     }));
+    app.add_plugins(WorldInspectorPlugin::new());
 
     app.add_systems(Startup, setup_map_camera);
     app.add_systems(Update, send_on_click);

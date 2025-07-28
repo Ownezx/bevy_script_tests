@@ -5,9 +5,13 @@ local function spawnTemplate(template:Template, x:number, y:number, rotation:num
     local transform = construct(types.Transform, {})
     transform.translation.x = x;
     transform.translation.y = y;
+    transform.scale.x = 1;
+    transform.scale.y = 1;
+    transform.scale.z = 1;
     if rotation then
         transform.rotation.z = rotation
     end
+
     world.insert_component(entity, types.Transform, transform)
 
     if template.sensor then

@@ -11,6 +11,8 @@ log = { version = "*", features = [
 ] }
 bevy_mod_scripting = { version = "0.13.0", features = ["luau","unsafe_lua_modules"] }
 bevy_prototype_lyon = "0.13.0"
+bevy_egui = "0.31"   
+bevy-inspector-egui = "0.30"
 
 # Enable a small amount of optimization in the dev profile.
 [profile.dev]
