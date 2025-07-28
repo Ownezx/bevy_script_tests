@@ -50,6 +50,19 @@ fn setup(mut icon_loaded: ResMut<IconLoaded>, asset_server: Res<AssetServer>) {
     );
 }
 
+fn update_component_size(
+    settings: Res<GameSettings>,
+    mut map_icons: Query<&mut Transform, With<MapIcon>>,
+) {
+    if !settings.is_changed() {
+        return;
+    }
+
+    for mut transform in map_icons.iter_mut() {
+        transform.scale = Vec3::splat(settings.map_icon_base_scale);
+    }
+}
+
 fn add_sprite_to_entity(ctx: FunctionCallContext, entity: Val<Entity>, icon: String) {
     let Ok(world) = ctx.world() else {
         error!("Could not access world in add_sprite_to_entity.");
@@ -137,17 +150,4 @@ fn add_sprite_to_entity(ctx: FunctionCallContext, entity: Val<Entity>, icon: Str
     };
 
     world.push_children(*entity, &[child_entity]).unwrap();
-}
-
-fn update_component_size(
-    settings: Res<GameSettings>,
-    mut map_icons: Query<&mut Transform, With<MapIcon>>,
-) {
-    if !settings.is_changed() {
-        return;
-    }
-
-    for mut transform in map_icons.iter_mut() {
-        transform.scale = Vec3::splat(settings.map_icon_base_scale);
-    }
 }

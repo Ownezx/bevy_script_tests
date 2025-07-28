@@ -13,7 +13,7 @@ use std::env;
 
 mod components;
 mod plugins;
-use crate::plugins::{database_manager::DatabaseManager, map_icon_manager::MapIconManager};
+use crate::plugins::{database_manager::DatabaseManager, map_icon_manager::MapIconManager, rts_camera::{RtsCamera, RtsCameraManager}};
 use crate::{components::sensor_trace::SensorTrace, plugins::map_grid_manager::MapGridManager};
 use crate::{
     components::subsystem_sensor::SubsystemSensor,
@@ -61,6 +61,12 @@ fn setup_map_camera(mut commands: Commands) {
         },
         Transform::default(),
         GlobalTransform::default(),
+        RtsCamera {
+            move_speed: 1000.0,
+            zoom_speed: 0.05,
+            min_zoom: 0.5,
+            max_zoom: 3.0,
+        },
     ));
 }
 
@@ -108,6 +114,7 @@ fn main() {
     app.add_plugins(ScriptManager);
     app.add_plugins(GameSettingsPlugin);
     app.add_plugins(MapGridManager);
+    app.add_plugins(RtsCameraManager);
 
     app.run();
 }
