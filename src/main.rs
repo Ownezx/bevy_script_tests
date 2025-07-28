@@ -61,7 +61,7 @@ fn setup_map_camera(mut commands: Commands) {
         },
         Transform::default(),
         GlobalTransform::default(),
-        RtsCamera::default(),
+        RtsCamera,
     ));
 }
 

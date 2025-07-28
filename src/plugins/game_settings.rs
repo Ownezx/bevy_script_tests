@@ -9,6 +9,12 @@ pub struct GameSettings {
     pub grid_width: isize,
     pub grid_height: isize,
     pub map_icon_base_scale: f32,
+    pub camera_move_speed: f32,
+    pub camera_zoom_speed: f32,
+    pub camera_min_zoom: f32,
+    pub camera_max_zoom: f32,
+    pub camera_edge_percent_x: f32,
+    pub camera_edge_percent_y: f32,
 }
 
 
