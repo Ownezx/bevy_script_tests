@@ -144,7 +144,8 @@ fn add_sprite_to_entity(ctx: FunctionCallContext, entity: Val<Entity>, icon: Str
         .get_component_type(visibility_registration)
         .unwrap()
         .unwrap();
-
+    
+    // This is to avoid problems with inherited visibilty.
     let Ok(_) = world.insert_component(*entity, visibility_registration, visibility_reference)
     else {
         error!("Unable to insert MapIcon on entity {}.", *entity);
