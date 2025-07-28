@@ -3,11 +3,12 @@ use bevy::prelude::*;
 use crate::plugins::scripting::LoadedScripts;
 
 
-#[derive(Resource, Default, Reflect)]
+#[derive(Resource, Default, Reflect, Clone)]
 pub struct GameSettings {
     pub grid_cell_size: f32,
     pub grid_width: isize,
     pub grid_height: isize,
+    pub map_icon_base_scale: f32,
 }
 
 
