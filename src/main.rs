@@ -13,7 +13,7 @@ use std::env;
 
 mod components;
 mod plugins;
-use crate::plugins::map_icon_manager::MapIconManager;
+use crate::plugins::{database_manager::DatabaseManager, map_icon_manager::MapIconManager};
 use crate::{components::sensor_trace::SensorTrace, plugins::map_grid_manager::MapGridManager};
 use crate::{
     components::subsystem_sensor::SubsystemSensor,
@@ -104,6 +104,7 @@ fn main() {
 
     app.add_plugins(BMSPlugin);
     app.add_plugins(MapIconManager);
+    app.add_plugins(DatabaseManager);
     app.add_plugins(ScriptManager);
     app.add_plugins(GameSettingsPlugin);
     app.add_plugins(MapGridManager);

@@ -22,6 +22,7 @@ pub fn load_script_assets(
     loaded_scripts.0.extend(vec![
         asset_server.load("lua/library/Template.luau"),
         asset_server.load("lua/templates/FirstTemplates.luau"),
+        asset_server.load("lua/templates/TemplateManager.luau"),
         asset_server.load("lua/GMActions/AddEntityOnClickPos.lua"),
         asset_server.load("lua/scenarios/test.lua"),
     ]);
