@@ -5,9 +5,9 @@ use bevy_mod_scripting::core::script::ScriptComponent;
 #[derive(Debug, Resource, Default)]
 pub struct LoadedScripts(pub Vec<Handle<ScriptAsset>>);
 
-pub struct ScriptPlugin;
+pub struct ScriptManager;
 
-impl Plugin for ScriptPlugin {
+impl Plugin for ScriptManager {
     fn build(&self, app: &mut App) {
         app.init_resource::<LoadedScripts>();
         app.add_systems(Startup, load_script_assets);

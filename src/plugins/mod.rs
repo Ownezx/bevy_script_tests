@@ -1,4 +1,5 @@
-pub mod map_icon_loader;
-pub mod map_grid;
+pub mod map_icon_manager;
+pub mod map_grid_manager;
 pub mod game_settings;
-pub mod scripting;
+pub mod script_manager;
+pub mod database_manager;

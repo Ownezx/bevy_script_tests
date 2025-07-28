@@ -8,9 +8,9 @@ use crate::plugins::game_settings::GameSettings;
 #[derive(Component)]
 struct Grid;
 
-pub struct MapGrid;
+pub struct MapGridManager;
 
-impl Plugin for MapGrid {
+impl Plugin for MapGridManager {
     fn build(&self, app: &mut App) {
         app.add_plugins(ShapePlugin)
             .add_systems(Startup, setup)

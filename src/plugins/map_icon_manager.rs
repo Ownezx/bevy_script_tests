@@ -8,7 +8,7 @@ use bevy_mod_scripting::core::bindings::{
 
 use crate::plugins::game_settings::GameSettings;
 
-pub struct MapIconLoader;
+pub struct MapIconManager;
 
 #[derive(Resource, Default, Reflect, Clone)]
 pub struct IconLoaded {
@@ -18,7 +18,7 @@ pub struct IconLoaded {
 #[reflect(Component)]
 pub struct MapIcon;
 
-impl Plugin for MapIconLoader {
+impl Plugin for MapIconManager {
     fn build(&self, app: &mut App) {
         app.add_systems(Startup, setup);
         app.init_resource::<IconLoaded>();
@@ -134,7 +134,7 @@ fn add_sprite_to_entity(ctx: FunctionCallContext, entity: Val<Entity>, icon: Str
         return;
     };
 
-    let mut visibility = InheritedVisibility::default();
+    let visibility = InheritedVisibility::default();
     let visibility_reference = {
         let mut allocator = (&binding).write();
         ReflectReference::new_allocated(visibility, &mut allocator)

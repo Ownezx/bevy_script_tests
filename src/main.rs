@@ -13,11 +13,11 @@ use std::env;
 
 mod components;
 mod plugins;
-use crate::plugins::map_icon_loader::MapIconLoader;
-use crate::{components::sensor_trace::SensorTrace, plugins::map_grid::MapGrid};
+use crate::plugins::map_icon_manager::MapIconManager;
+use crate::{components::sensor_trace::SensorTrace, plugins::map_grid_manager::MapGridManager};
 use crate::{
     components::subsystem_sensor::SubsystemSensor,
-    plugins::{game_settings::GameSettingsPlugin, scripting::ScriptPlugin},
+    plugins::{game_settings::GameSettingsPlugin, script_manager::ScriptManager},
 };
 
 callback_labels!(
@@ -103,10 +103,10 @@ fn main() {
     app.register_type::<SensorTrace>();
 
     app.add_plugins(BMSPlugin);
-    app.add_plugins(MapIconLoader);
-    app.add_plugins(ScriptPlugin);
+    app.add_plugins(MapIconManager);
+    app.add_plugins(ScriptManager);
     app.add_plugins(GameSettingsPlugin);
-    app.add_plugins(MapGrid);
+    app.add_plugins(MapGridManager);
 
     app.run();
 }

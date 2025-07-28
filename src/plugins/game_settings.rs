@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::plugins::scripting::LoadedScripts;
+use crate::plugins::script_manager::LoadedScripts;
 
 
 #[derive(Resource, Default, Reflect, Clone)]
