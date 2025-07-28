@@ -3,7 +3,7 @@ use bevy::prelude::*;
 use bevy::utils::HashMap;
 use bevy_mod_scripting::core::bindings::{
     FunctionCallContext, GlobalNamespace, NamespaceBuilder, ReflectReference,
-    ScriptComponentRegistration, ScriptResourceRegistration, ScriptTypeRegistration, Val,
+    ScriptComponentRegistration, ScriptTypeRegistration, Val,
 };
 
 use crate::plugins::game_settings::GameSettings;
@@ -31,10 +31,7 @@ impl Plugin for MapIconManager {
     }
 }
 
-fn setup(
-    mut icon_loaded: ResMut<IconLoaded>,
-    asset_server: Res<AssetServer>,
-) {
+fn setup(mut icon_loaded: ResMut<IconLoaded>, asset_server: Res<AssetServer>) {
     icon_loaded.hash.insert(
         "corvette".to_string(),
         asset_server.load("map_icons/corvette.png"),
@@ -59,29 +56,11 @@ fn add_sprite_to_entity(ctx: FunctionCallContext, entity: Val<Entity>, icon: Str
         return;
     };
 
-    let game_settings: ScriptTypeRegistration = world.get_type_by_name("GameSettings").unwrap();
-    let game_settings: ScriptResourceRegistration =
-        world.get_resource_type(game_settings).unwrap().unwrap();
-    let game_settings: ReflectReference = world
-        .get_resource(game_settings.resource_id())
-        .unwrap()
-        .unwrap();
-    let game_settings: GameSettings = game_settings.downcast(ctx.world().unwrap()).unwrap();
-
-    let icon_loaded: ScriptTypeRegistration = world.get_type_by_name("IconLoaded").unwrap();
-    let icon_loaded: ScriptResourceRegistration =
-        world.get_resource_type(icon_loaded).unwrap().unwrap();
-    let icon_loaded: ReflectReference = world
-        .get_resource(icon_loaded.resource_id())
-        .unwrap()
+    let image = world
+        .with_resource(|icon_loaded: &IconLoaded| icon_loaded.hash.get(&icon).unwrap().clone())
         .unwrap();
 
-    let icon_loaded: IconLoaded = icon_loaded.downcast(ctx.world().unwrap()).unwrap();
-    let Some(image) = icon_loaded.hash.get(&icon) else {
-        error!("Image {icon} not loaded.");
-        return;
-    };
-    let sprite: Sprite = Sprite::from_image(image.clone());
+    let sprite: Sprite = Sprite::from_image(image);
     let binding = world.allocator();
 
     let sprite_reference = {
@@ -95,7 +74,7 @@ fn add_sprite_to_entity(ctx: FunctionCallContext, entity: Val<Entity>, icon: Str
         .unwrap()
         .unwrap();
 
-    let map_icon = MapIcon;   
+    let map_icon = MapIcon;
     let map_icon_reference = {
         let mut allocator = (&binding).write();
         ReflectReference::new_allocated(map_icon, &mut allocator)
@@ -106,13 +85,17 @@ fn add_sprite_to_entity(ctx: FunctionCallContext, entity: Val<Entity>, icon: Str
         .unwrap()
         .unwrap();
 
+    let map_icon_base_scale = world
+        .with_resource(|game_settings: &GameSettings| game_settings.map_icon_base_scale)
+        .unwrap();
     let mut transform = Transform::default();
-    transform.scale = Vec3::splat(game_settings.map_icon_base_scale);
+    transform.scale = Vec3::splat(map_icon_base_scale);
     let transform_reference = {
         let mut allocator = (&binding).write();
         ReflectReference::new_allocated(transform, &mut allocator)
     };
-    let transform_registration: ScriptTypeRegistration = world.get_type_by_name("Transform").unwrap();
+    let transform_registration: ScriptTypeRegistration =
+        world.get_type_by_name("Transform").unwrap();
     let transform_registration: ScriptComponentRegistration = world
         .get_component_type(transform_registration)
         .unwrap()
@@ -139,12 +122,13 @@ fn add_sprite_to_entity(ctx: FunctionCallContext, entity: Val<Entity>, icon: Str
         let mut allocator = (&binding).write();
         ReflectReference::new_allocated(visibility, &mut allocator)
     };
-    let visibility_registration: ScriptTypeRegistration = world.get_type_by_name("InheritedVisibility").unwrap();
+    let visibility_registration: ScriptTypeRegistration =
+        world.get_type_by_name("InheritedVisibility").unwrap();
     let visibility_registration: ScriptComponentRegistration = world
         .get_component_type(visibility_registration)
         .unwrap()
         .unwrap();
-    
+
     // This is to avoid problems with inherited visibilty.
     let Ok(_) = world.insert_component(*entity, visibility_registration, visibility_reference)
     else {

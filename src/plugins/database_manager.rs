@@ -3,9 +3,6 @@ use bevy::log::info;
 use bevy::prelude::*;
 use bevy::utils::HashMap;
 use bevy_mod_scripting::core::bindings::FunctionCallContext;
-use bevy_mod_scripting::core::bindings::ReflectReference;
-use bevy_mod_scripting::core::bindings::ScriptResourceRegistration;
-use bevy_mod_scripting::core::bindings::ScriptTypeRegistration;
 use bevy_mod_scripting::core::bindings::{GlobalNamespace, NamespaceBuilder, ScriptValue};
 
 #[derive(Reflect, Clone)]
@@ -64,7 +61,7 @@ fn add_template_to_database(
         return;
     };
 
-    let result = world.with_resource_mut::<_, Database, _>(|mut database: Mut<Database>| {
+    world.with_resource_mut(|mut database: Mut<Database>| {
         let library_hash = database
             .templates
             .entry(template_library.to_string())
@@ -88,5 +85,5 @@ fn add_template_to_database(
 
         library_hash.insert(name.to_string(), template);
         ()
-    });
+    }).unwrap();
 }
