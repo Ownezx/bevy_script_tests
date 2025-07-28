@@ -18,9 +18,9 @@ fn camera_movement(
     keys: Res<ButtonInput<KeyCode>>,
     time: Res<Time>,
     settings: Res<GameSettings>,
-    mut query: Query<&mut Transform, With<RtsCamera>>,
+    mut query: Query<(&mut Transform, &OrthographicProjection), With<RtsCamera>>,
 ) {
-    for mut transform in &mut query {
+    for (mut transform, projection) in &mut query {
         let mut dir = Vec2::ZERO;
         if keys.pressed(KeyCode::ArrowLeft) {
             dir.x -= 1.0;
@@ -35,7 +35,9 @@ fn camera_movement(
             dir.y -= 1.0;
         }
 
-        let movement = dir.normalize_or_zero() * settings.camera_move_speed * time.delta_secs();
+        // Scale movement speed by the current zoom level (projection.scale)
+        let movement_speed = settings.camera_move_speed * projection.scale;
+        let movement = dir.normalize_or_zero() * movement_speed * time.delta_secs();
         transform.translation += movement.extend(0.0);
     }
 }
@@ -44,7 +46,7 @@ fn camera_edge_scrolling(
     windows: Query<&Window>,
     time: Res<Time>,
     settings: Res<GameSettings>,
-    mut query: Query<&mut Transform, With<RtsCamera>>,
+    mut query: Query<(&mut Transform, &OrthographicProjection), With<RtsCamera>>,
 ) {
     let Ok(window) = windows.get_single() else { return; };
     let Some(cursor_pos) = window.cursor_position() else { return; };
@@ -52,7 +54,7 @@ fn camera_edge_scrolling(
     let width = window.width();
     let height = window.height();
 
-    for mut transform in &mut query {
+    for (mut transform, projection) in &mut query {
         let mut dir = Vec2::ZERO;
 
         if cursor_pos.x < width * settings.camera_edge_percent_x {
@@ -68,7 +70,9 @@ fn camera_edge_scrolling(
             dir.y -= 1.0;
         }
 
-        let movement = dir.normalize_or_zero() * settings.camera_move_speed * time.delta_secs();
+        // Scale movement speed by the current zoom level
+        let movement_speed = settings.camera_move_speed * projection.scale;
+        let movement = dir.normalize_or_zero() * movement_speed * time.delta_secs();
         transform.translation += movement.extend(0.0);
     }
 }

@@ -6,7 +6,8 @@ settings.grid_height = 30
 
 settings.map_icon_base_scale = 0.3;
 
-settings.camera_move_speed = 1000.0;
+-- proprtional to zoom
+settings.camera_move_speed = 700.0;
 settings.camera_zoom_speed = 0.05;
 settings.camera_min_zoom = 0.5;
 settings.camera_max_zoom = 3.0;
