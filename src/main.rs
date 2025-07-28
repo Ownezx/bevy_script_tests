@@ -61,12 +61,7 @@ fn setup_map_camera(mut commands: Commands) {
         },
         Transform::default(),
         GlobalTransform::default(),
-        RtsCamera {
-            move_speed: 1000.0,
-            zoom_speed: 0.05,
-            min_zoom: 0.5,
-            max_zoom: 3.0,
-        },
+        RtsCamera::default(),
     ));
 }
 
