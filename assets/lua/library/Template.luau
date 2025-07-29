@@ -13,7 +13,8 @@ local function spawnTemplate(template:Template, x:number, y:number, rotation:num
     transform.scale.y = 1;
     transform.scale.z = 1;
     if rotation then
-        transform.rotation.z = rotation
+        transform.rotation.z = math.sin(rotation/2);
+        transform.rotation.w = math.cos(rotation/2);
     end
 
     world.insert_component(entity, types.Transform, transform)

@@ -1,6 +1,8 @@
 use bevy::log::error;
 use bevy::{prelude::*, window::PrimaryWindow};
 use bevy_mod_scripting::core::bindings::FunctionCallContext;
+use bevy_mod_scripting::core::commands::AddStaticScript;
+use bevy_mod_scripting::core::script::ScriptComponent;
 use bevy_mod_scripting::{
     core::{
         bindings::{GlobalNamespace, NamespaceBuilder, ScriptValue},
@@ -10,6 +12,10 @@ use bevy_mod_scripting::{
     },
     lua::LuaScriptingPlugin,
 };
+use std::fs;
+use std::path::Path;
+
+use crate::plugins::script_manager::LoadedScripts;
 
 #[derive(Resource, Default, Reflect, Clone)]
 pub struct GMActions {
@@ -30,9 +36,36 @@ impl Plugin for GMActionsManager {
             Update,
             event_handler::<OnGmAction, LuaScriptingPlugin>.after(send_on_gm_action),
         );
+        app.add_systems(Startup, setup);
         let world = app.world_mut();
         NamespaceBuilder::<GlobalNamespace>::new_unregistered(world)
             .register("register_gm_function", register_gm_function);
+    }
+}
+
+fn setup(
+    mut commands: Commands,
+    asset_server: Res<AssetServer>,
+    mut loaded_scripts: ResMut<LoadedScripts>,
+) {
+    let script_dir = Path::new("assets/lua/GMActions");
+
+    if let Ok(entries) = fs::read_dir(script_dir) {
+        for entry in entries.flatten() {
+            let path = entry.path();
+
+            // Accept only `.lua` and `.luau` files
+            if let Some(ext) = path.extension().and_then(|e| e.to_str()) {
+                if ext == "lua" || ext == "luau" {
+                    if let Some(relative_path) = path.strip_prefix("assets").ok().and_then(|p| p.to_str()) {
+                        let handle = asset_server.load(relative_path);
+                        loaded_scripts.0.push(handle.clone());
+                        commands.queue(AddStaticScript::new(relative_path.to_string()));                    }
+                }
+            }
+        }
+    } else {
+        error!("Could not read script directory: {:?}", script_dir);
     }
 }
 
@@ -42,7 +75,7 @@ pub fn send_on_gm_action(
     q_windows: Query<&Window, With<PrimaryWindow>>,
     mut events: EventWriter<ScriptCallbackEvent>,
 ) {
-    if buttons.just_pressed(MouseButton::Left) {
+    if buttons.just_pressed(MouseButton::Left) || buttons.just_pressed(MouseButton::Right) {
         let (camera, camera_transform) = *camera_query;
         let window = q_windows.single();
 
@@ -54,10 +87,16 @@ pub fn send_on_gm_action(
         let Ok(world_pos) = camera.viewport_to_world_2d(camera_transform, cursor_position) else {
             return;
         };
+
+        let gm_action_type: String = 
+        {
+            if buttons.just_pressed(MouseButton::Left) {"singleEntity".to_string()}
+            else {"entityCircle".to_string()}
+        };
         events.send(ScriptCallbackEvent::new_for_all(
             OnGmAction,
             vec![
-                ScriptValue::String("singleEntity".to_string().into()),
+                ScriptValue::String(gm_action_type.into()),
                 ScriptValue::String("cruiser".to_string().into()),
                 ScriptValue::Integer(world_pos.x as i64),
                 ScriptValue::Integer(world_pos.y as i64),

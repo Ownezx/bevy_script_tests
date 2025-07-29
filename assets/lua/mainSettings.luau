@@ -11,5 +11,5 @@ settings.camera_move_speed = 700.0;
 settings.camera_zoom_speed = 0.05;
 settings.camera_min_zoom = 0.5;
 settings.camera_max_zoom = 3.0;
-settings.camera_edge_percent_x = 0.1;
-settings.camera_edge_percent_y = 0.1;
+settings.camera_edge_percent_x = 0.05;
+settings.camera_edge_percent_y = 0.05;
