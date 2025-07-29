@@ -78,7 +78,6 @@ fn draw_button_grid(
                                             current_action.template_category = Some(tab_name.clone());
                                             current_action.template_name = Some(template.name.clone());
                                             info!(
-                                                "Clicked template: {} / {}",
                                                 tab_name, template.name
                                             );
                                         }
@@ -107,7 +106,6 @@ fn draw_button_grid(
                                 .clicked()
                             {
                                 current_action.command = Some(command.clone());
-                                info!("Clicked command: {}", command);
                             }
                         } else {
                             ui.add_sized(button_size, egui::Label::new(""));

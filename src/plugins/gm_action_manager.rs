@@ -107,7 +107,6 @@ pub fn send_on_gm_action(
             return;
         };
 
-        info!("{:?}",current_action);
         let Some(command) = (*current_action).command.clone() else {return;};
 
         if let (Some(category), Some(name)) = (

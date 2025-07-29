@@ -12,7 +12,7 @@ local function spawnTemplate(template:Template, x:number, y:number, rotation:num
     transform.scale.x = 1;
     transform.scale.y = 1;
     transform.scale.z = 1;
-    if rotation then
+    if rotation and not template.fixed_rotation then
         transform.rotation.z = math.sin(rotation/2);
         transform.rotation.w = math.cos(rotation/2);
     end
@@ -54,6 +54,7 @@ export type Template = {
     sensor_trace:SensorTrace?,
     sensor:SubsystemSensor?,
     map_icon:string?,
+    fixed_rotation:boolean,
 }
 
 return {spawnTemplate = spawnTemplate}

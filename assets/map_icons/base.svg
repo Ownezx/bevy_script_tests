@@ -30,19 +30,19 @@
      inkscape:bbox-nodes="true"
      inkscape:bbox-paths="true"
      inkscape:snap-bbox="true"
-     inkscape:window-maximized="0"
+     inkscape:window-maximized="1"
      inkscape:window-y="25"
      inkscape:window-x="0"
-     inkscape:window-height="449"
-     inkscape:window-width="1312"
+     inkscape:window-height="847"
+     inkscape:window-width="1440"
      units="px"
      showgrid="true"
      inkscape:document-rotation="0"
      inkscape:current-layer="layer1"
      inkscape:document-units="px"
-     inkscape:cy="534.39093"
-     inkscape:cx="102.68256"
-     inkscape:zoom="0.90570399"
+     inkscape:cy="151.76815"
+     inkscape:cx="73.333352"
+     inkscape:zoom="2.3522721"
      inkscape:pageshadow="2"
      inkscape:pageopacity="0.0"
      borderopacity="1"
@@ -280,16 +280,19 @@
        d="M 53.144202,52.91666 H 63.727536"
        style="fill:none;fill-opacity:0.239216;stroke:#ffffff;stroke-width:1.32292;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
        sodipodi:nodetypes="cc" />
-    <path
-       id="path966-1"
-       d="M 31.977536,52.91666 V 47.624994"
-       style="fill:none;fill-opacity:0.239216;stroke:#ffffff;stroke-width:1.32292;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
-       sodipodi:nodetypes="cc" />
-    <path
-       id="path968-4"
-       d="M 37.269202,58.208327 31.977536,52.91666 26.685869,58.208327"
-       style="fill:none;fill-opacity:0.239216;stroke:#ffffff;stroke-width:1.32292;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
-       sodipodi:nodetypes="ccc" />
+    <g
+       id="g1">
+      <path
+         id="path966-1"
+         d="M 31.977536,52.91666 V 47.624994"
+         style="fill:none;fill-opacity:0.239216;stroke:#ffffff;stroke-width:1.32292;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
+         sodipodi:nodetypes="cc" />
+      <path
+         id="path968-4"
+         d="M 37.269202,58.208327 31.977536,52.91666 26.685869,58.208327"
+         style="fill:none;fill-opacity:0.239216;stroke:#ffffff;stroke-width:1.32292;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
+         sodipodi:nodetypes="ccc" />
+    </g>
     <path
        id="path958-5-1"
        d="m 79.602536,47.624994 5.291668,5.291665 5.291665,-5.291665"

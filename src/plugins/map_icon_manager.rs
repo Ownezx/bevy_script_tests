@@ -48,6 +48,10 @@ fn setup(mut icon_loaded: ResMut<IconLoaded>, asset_server: Res<AssetServer>) {
         "frigate".to_string(),
         asset_server.load("map_icons/frigate.png"),
     );
+    icon_loaded.hash.insert(
+        "mine".to_string(),
+        asset_server.load("map_icons/mine.png"),
+    );
 }
 
 fn update_component_size(

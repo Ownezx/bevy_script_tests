@@ -1,0 +1,1 @@
+To export to the right size, export at 300 DPI
