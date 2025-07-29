@@ -1,5 +1,6 @@
 use bevy::prelude::*;
 use bevy_mod_scripting::core::asset::ScriptAsset;
+use bevy_mod_scripting::core::bindings::{GlobalNamespace, NamespaceBuilder, ScriptValue};
 use bevy_mod_scripting::core::script::ScriptComponent;
 
 #[derive(Debug, Resource, Default)]
@@ -12,6 +13,9 @@ impl Plugin for ScriptManager {
         app.init_resource::<LoadedScripts>();
         app.add_systems(Startup, load_script_assets);
         app.add_systems(Startup, spawn_loaded_scripts.after(load_script_assets));
+        let world = app.world_mut();
+        NamespaceBuilder::<GlobalNamespace>::new_unregistered(world)
+        .register("print", print_lua);
     }
 }
 
@@ -23,7 +27,7 @@ pub fn load_script_assets(
         asset_server.load("lua/library/Template.luau"),
         asset_server.load("lua/templates/FirstTemplates.luau"),
         asset_server.load("lua/templates/TemplateManager.luau"),
-        asset_server.load("lua/GMActions/AddEntityOnClickPos.lua"),
+        asset_server.load("lua/GMActions/AddEntityOnClickPos.luau"),
         asset_server.load("lua/scenarios/test.lua"),
     ]);
 }
@@ -33,4 +37,17 @@ fn spawn_loaded_scripts(mut commands: Commands) {
         "lua/library/mainSettings.lua",
         "lua/GMActions/AddEntityOnClickPos.lua",
     ]));
+}
+
+fn print_lua(
+    string: ScriptValue,
+) {
+    let ScriptValue::String(value) = string else {
+        error!(
+            "template_library should be ScriptValue::String, got {}",
+            string.type_name()
+        );
+        return;
+    };
+    info!("lua: print: {}", value);
 }
