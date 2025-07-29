@@ -1,14 +1,9 @@
 use bevy::{
     prelude::*,
-    window::{PresentMode, PrimaryWindow},
+    window::{PresentMode},
 };
 use bevy_inspector_egui::quick::WorldInspectorPlugin;
 use bevy_mod_scripting::BMSPlugin;
-use bevy_mod_scripting::core::{
-    bindings::script_value::ScriptValue, callback_labels, event::ScriptCallbackEvent,
-    handler::event_handler,
-};
-use bevy_mod_scripting::lua::LuaScriptingPlugin;
 use std::env;
 
 mod components;
