@@ -13,44 +13,13 @@ use std::env;
 
 mod components;
 mod plugins;
-use crate::plugins::{database_manager::DatabaseManager, map_icon_manager::MapIconManager, rts_camera::{RtsCamera, RtsCameraManager}};
+use crate::plugins::{database_manager::DatabaseManager, gm_action_manager::GMActionsManager, map_icon_manager::MapIconManager, rts_camera::{RtsCamera, RtsCameraManager}};
 use crate::{components::sensor_trace::SensorTrace, plugins::map_grid_manager::MapGridManager};
 use crate::{
     components::subsystem_sensor::SubsystemSensor,
     plugins::{game_settings::GameSettingsPlugin, script_manager::ScriptManager},
 };
 
-callback_labels!(
-    OnClick => "on_click"
-);
-
-pub fn send_on_click(
-    buttons: Res<ButtonInput<MouseButton>>,
-    camera_query: Single<(&Camera, &GlobalTransform)>,
-    q_windows: Query<&Window, With<PrimaryWindow>>,
-    mut events: EventWriter<ScriptCallbackEvent>,
-) {
-    if buttons.just_pressed(MouseButton::Left) {
-        let (camera, camera_transform) = *camera_query;
-        let window = q_windows.single();
-    
-        let Some(cursor_position) = window.cursor_position() else {
-            return;
-        };
-    
-        // Calculate a world position based on the cursor's position.
-        let Ok(world_pos) = camera.viewport_to_world_2d(camera_transform, cursor_position) else {
-            return;
-        };
-        events.send(ScriptCallbackEvent::new_for_all(
-            OnClick,
-            vec![
-                ScriptValue::Integer(world_pos.x as i64),
-                ScriptValue::Integer(world_pos.y as i64),
-            ],
-        ));
-    }
-}
 
 fn setup_map_camera(mut commands: Commands) {
     commands.spawn((
@@ -94,11 +63,6 @@ fn main() {
     app.add_plugins(WorldInspectorPlugin::new());
 
     app.add_systems(Startup, setup_map_camera);
-    app.add_systems(Update, send_on_click);
-    app.add_systems(
-        Update,
-        event_handler::<OnClick, LuaScriptingPlugin>.after(send_on_click),
-    );
 
     app.register_type::<SubsystemSensor>();
     app.register_type::<SensorTrace>();
@@ -110,6 +74,7 @@ fn main() {
     app.add_plugins(GameSettingsPlugin);
     app.add_plugins(MapGridManager);
     app.add_plugins(RtsCameraManager);
+    app.add_plugins(GMActionsManager);
 
     app.run();
 }
