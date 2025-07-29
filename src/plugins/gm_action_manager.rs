@@ -22,11 +22,12 @@ use crate::plugins::script_manager::LoadedScripts;
 pub struct GMCurrentAction {
     pub template_category: Option<String>,
     pub template_name: Option<String>,
+    pub command: Option<String>,
 }
 
 #[derive(Resource, Default, Reflect, Clone)]
 pub struct GMActions {
-    command_list: Vec<String>,
+    pub command_list: Vec<String>,
 }
 
 callback_labels!(
@@ -106,22 +107,17 @@ pub fn send_on_gm_action(
             return;
         };
 
-        let gm_action_type: String = {
-            if buttons.just_pressed(MouseButton::Left) {
-                "singleEntity".to_string()
-            } else {
-                "entityCircle".to_string()
-            }
-        };
+        info!("{:?}",current_action);
+        let Some(command) = (*current_action).command.clone() else {return;};
 
         if let (Some(category), Some(name)) = (
-            current_action.template_category.clone(),
+            (*current_action).template_category.clone(),
             current_action.template_name.clone(),
         ) {
             events.send(ScriptCallbackEvent::new_for_all(
                 OnGmAction,
                 vec![
-                    ScriptValue::String(gm_action_type.into()),
+                    ScriptValue::String(command.into()),
                     ScriptValue::String(name.into()),
                     ScriptValue::Integer(world_pos.x as i64),
                     ScriptValue::Integer(world_pos.y as i64),
