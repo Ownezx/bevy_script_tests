@@ -2,7 +2,6 @@ use bevy::log::error;
 use bevy::{prelude::*, window::PrimaryWindow};
 use bevy_mod_scripting::core::bindings::FunctionCallContext;
 use bevy_mod_scripting::core::commands::AddStaticScript;
-use bevy_mod_scripting::core::script::ScriptComponent;
 use bevy_mod_scripting::{
     core::{
         bindings::{GlobalNamespace, NamespaceBuilder, ScriptValue},
@@ -12,6 +11,7 @@ use bevy_mod_scripting::{
     },
     lua::LuaScriptingPlugin,
 };
+use bevy_egui::{EguiContexts};
 use std::fs;
 use std::path::Path;
 
@@ -70,11 +70,17 @@ fn setup(
 }
 
 pub fn send_on_gm_action(
+    mut egui_contexts: EguiContexts,
     buttons: Res<ButtonInput<MouseButton>>,
     camera_query: Single<(&Camera, &GlobalTransform)>,
     q_windows: Query<&Window, With<PrimaryWindow>>,
     mut events: EventWriter<ScriptCallbackEvent>,
 ) {
+    let ctx = egui_contexts.ctx_mut();
+    if ctx.wants_pointer_input() || ctx.wants_keyboard_input() {
+        return; 
+    }
+
     if buttons.just_pressed(MouseButton::Left) || buttons.just_pressed(MouseButton::Right) {
         let (camera, camera_transform) = *camera_query;
         let window = q_windows.single();

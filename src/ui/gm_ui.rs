@@ -1,0 +1,87 @@
+use bevy::prelude::*;
+use bevy_egui::{egui, EguiContexts};
+
+use crate::plugins::database_manager::GameDatabase;
+
+pub struct GmUi;
+
+#[derive(Resource, Default)]
+struct SelectedTab {
+    name: Option<String>,
+}
+
+impl Plugin for GmUi {
+    fn build(&self, app: &mut App) {
+        app.insert_resource(SelectedTab::default());
+        app.add_systems(Update, draw_button_grid);
+    }
+}
+
+fn draw_button_grid(
+    mut contexts: EguiContexts,
+    db: Res<GameDatabase>,
+    mut selected_tab: ResMut<SelectedTab>,
+) {
+    if selected_tab.name.is_none() {
+        if let Some(first_key) = db.templates.keys().next() {
+            selected_tab.name = Some(first_key.clone());
+        }
+    }
+
+    let button_size = egui::vec2(60.0, 60.0);
+    let grid_size = button_size.x * 3.0;
+
+    egui::Window::new("Grid")
+        .anchor(egui::Align2::LEFT_BOTTOM, [10.0, 10.0])
+        .resizable(false)
+        .title_bar(false)
+        .fixed_size([grid_size + 20.0, grid_size + 50.0]) // pad for tab + spacing
+        .show(contexts.ctx_mut(), |ui| {
+            // Tabs
+            ui.horizontal_wrapped(|ui| {
+                for category in db.templates.keys() {
+                    let selected = selected_tab
+                        .name
+                        .as_ref()
+                        .map_or(false, |n| n == category);
+                    if ui
+                        .selectable_label(selected, category)
+                        .clicked()
+                    {
+                        selected_tab.name = Some(category.clone());
+                    }
+                }
+            });
+
+            ui.separator();
+
+            // Grid
+            if let Some(tab_name) = &selected_tab.name {
+                if let Some(inner_map) = db.templates.get(tab_name) {
+                    let templates: Vec<_> = inner_map.values().collect();
+
+                    egui::Grid::new("template_grid")
+                        .spacing([4.0, 4.0])
+                        .min_col_width(button_size.x)
+                        .show(ui, |ui| {
+                            for row in 0..3 {
+                                for col in 0..3 {
+                                    let idx = row * 3 + col;
+                                    if let Some(template) = templates.get(idx) {
+                                        if ui
+                                            .add_sized(button_size, egui::Button::new(&template.name))
+                                            .clicked()
+                                        {
+                                            info!("Clicked template: {} / {}", tab_name, template.name);
+                                        }
+                                    } else {
+                                        ui.add_sized(button_size, egui::Label::new(""));
+                                    }
+                                }
+                                ui.end_row();
+                            }
+                        });
+                }
+            }
+        });
+}

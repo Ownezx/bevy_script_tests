@@ -2,7 +2,6 @@ use bevy::prelude::*;
 use bevy_mod_scripting::core::asset::ScriptAsset;
 use bevy_mod_scripting::core::bindings::{DisplayWithWorld, FunctionCallContext, GlobalNamespace, NamespaceBuilder, ScriptValue};
 use bevy_mod_scripting::core::commands::AddStaticScript;
-use bevy_mod_scripting::core::script::ScriptComponent;
 
 #[derive(Debug, Resource, Default)]
 pub struct LoadedScripts(pub Vec<Handle<ScriptAsset>>);

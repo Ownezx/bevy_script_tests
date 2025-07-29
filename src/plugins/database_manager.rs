@@ -6,21 +6,21 @@ use bevy_mod_scripting::core::bindings::FunctionCallContext;
 use bevy_mod_scripting::core::bindings::{GlobalNamespace, NamespaceBuilder, ScriptValue};
 
 #[derive(Reflect, Clone)]
-struct Template {
-    name: String,
+pub struct Template {
+    pub name: String,
 }
 
 #[derive(Resource, Default, Reflect, Clone)]
-struct Database {
-    templates: HashMap<String, HashMap<String, Template>>,
+pub struct GameDatabase {
+    pub templates: HashMap<String, HashMap<String, Template>>,
 }
 
 pub struct DatabaseManager;
 
 impl Plugin for DatabaseManager {
     fn build(&self, app: &mut App) {
-        app.init_resource::<Database>();
-        app.register_type::<Database>();
+        app.init_resource::<GameDatabase>();
+        app.register_type::<GameDatabase>();
         let world = app.world_mut();
         NamespaceBuilder::<GlobalNamespace>::new_unregistered(world)
             .register("add_template_to_database", add_template_to_database);
@@ -61,7 +61,7 @@ fn add_template_to_database(
         return;
     };
 
-    world.with_resource_mut(|mut database: Mut<Database>| {
+    world.with_resource_mut(|mut database: Mut<GameDatabase>| {
         let library_hash = database
             .templates
             .entry(template_library.to_string())

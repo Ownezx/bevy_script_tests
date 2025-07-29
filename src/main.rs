@@ -2,13 +2,15 @@ use bevy::{
     prelude::*,
     window::{PresentMode},
 };
+use bevy_egui::EguiPlugin;
 use bevy_inspector_egui::quick::WorldInspectorPlugin;
 use bevy_mod_scripting::BMSPlugin;
 use std::env;
 
 mod components;
 mod plugins;
-use crate::plugins::{database_manager::DatabaseManager, gm_action_manager::GMActionsManager, map_icon_manager::MapIconManager, rts_camera::{RtsCamera, RtsCameraManager}};
+mod ui;
+use crate::{plugins::{database_manager::DatabaseManager, gm_action_manager::GMActionsManager, map_icon_manager::MapIconManager, rts_camera::{RtsCamera, RtsCameraManager}}, ui::gm_ui::GmUi};
 use crate::{components::sensor_trace::SensorTrace, plugins::map_grid_manager::MapGridManager};
 use crate::{
     components::subsystem_sensor::SubsystemSensor,
@@ -55,13 +57,12 @@ fn main() {
         }),
         ..default()
     }));
-    app.add_plugins(WorldInspectorPlugin::new());
-
+    
     app.add_systems(Startup, setup_map_camera);
-
+    
     app.register_type::<SubsystemSensor>();
     app.register_type::<SensorTrace>();
-
+    
     app.add_plugins(BMSPlugin);
     app.add_plugins(MapIconManager);
     app.add_plugins(DatabaseManager);
@@ -70,6 +71,9 @@ fn main() {
     app.add_plugins(MapGridManager);
     app.add_plugins(RtsCameraManager);
     app.add_plugins(GMActionsManager);
-
+    app.add_plugins(EguiPlugin);
+    app.add_plugins(GmUi);
+    
+    app.add_plugins(WorldInspectorPlugin::new());
     app.run();
 }

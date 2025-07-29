@@ -14,7 +14,6 @@ function on_gm_action(name:string, template:string, x:number, y:number)
 
             Template.spawnTemplate(simple[template], spawn_x, spawn_y, angle - math.pi/2)
         end
-        print("Spawned " .. NUM_SHIPS .. " entities in a circle at center: " .. x .. ", " .. y)
     end
 end
 
