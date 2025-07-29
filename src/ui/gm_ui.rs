@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 use bevy_egui::{egui, EguiContexts};
 
-use crate::plugins::database_manager::GameDatabase;
+use crate::plugins::{database_manager::GameDatabase, gm_action_manager::GMCurrentAction};
 
 pub struct GmUi;
 
@@ -20,6 +20,7 @@ impl Plugin for GmUi {
 fn draw_button_grid(
     mut contexts: EguiContexts,
     db: Res<GameDatabase>,
+    mut current_action: ResMut<GMCurrentAction>,
     mut selected_tab: ResMut<SelectedTab>,
 ) {
     if selected_tab.name.is_none() {
@@ -72,6 +73,8 @@ fn draw_button_grid(
                                             .add_sized(button_size, egui::Button::new(&template.name))
                                             .clicked()
                                         {
+                                            current_action.template_category = Some(tab_name.clone());
+                                            current_action.template_name = Some(template.name.clone());
                                             info!("Clicked template: {} / {}", tab_name, template.name);
                                         }
                                     } else {

@@ -1,5 +1,7 @@
 use bevy::log::error;
+use bevy::log::info;
 use bevy::{prelude::*, window::PrimaryWindow};
+use bevy_egui::EguiContexts;
 use bevy_mod_scripting::core::bindings::FunctionCallContext;
 use bevy_mod_scripting::core::commands::AddStaticScript;
 use bevy_mod_scripting::{
@@ -11,11 +13,16 @@ use bevy_mod_scripting::{
     },
     lua::LuaScriptingPlugin,
 };
-use bevy_egui::{EguiContexts};
 use std::fs;
 use std::path::Path;
 
 use crate::plugins::script_manager::LoadedScripts;
+
+#[derive(Resource, Debug, Default)]
+pub struct GMCurrentAction {
+    pub template_category: Option<String>,
+    pub template_name: Option<String>,
+}
 
 #[derive(Resource, Default, Reflect, Clone)]
 pub struct GMActions {
@@ -31,6 +38,7 @@ pub struct GMActionsManager;
 impl Plugin for GMActionsManager {
     fn build(&self, app: &mut App) {
         app.init_resource::<GMActions>();
+        app.init_resource::<GMCurrentAction>();
         app.add_systems(Update, send_on_gm_action);
         app.add_systems(
             Update,
@@ -57,10 +65,13 @@ fn setup(
             // Accept only `.lua` and `.luau` files
             if let Some(ext) = path.extension().and_then(|e| e.to_str()) {
                 if ext == "lua" || ext == "luau" {
-                    if let Some(relative_path) = path.strip_prefix("assets").ok().and_then(|p| p.to_str()) {
+                    if let Some(relative_path) =
+                        path.strip_prefix("assets").ok().and_then(|p| p.to_str())
+                    {
                         let handle = asset_server.load(relative_path);
                         loaded_scripts.0.push(handle.clone());
-                        commands.queue(AddStaticScript::new(relative_path.to_string()));                    }
+                        commands.queue(AddStaticScript::new(relative_path.to_string()));
+                    }
                 }
             }
         }
@@ -72,13 +83,14 @@ fn setup(
 pub fn send_on_gm_action(
     mut egui_contexts: EguiContexts,
     buttons: Res<ButtonInput<MouseButton>>,
+    current_action: Res<GMCurrentAction>,
     camera_query: Single<(&Camera, &GlobalTransform)>,
     q_windows: Query<&Window, With<PrimaryWindow>>,
     mut events: EventWriter<ScriptCallbackEvent>,
 ) {
     let ctx = egui_contexts.ctx_mut();
     if ctx.wants_pointer_input() || ctx.wants_keyboard_input() {
-        return; 
+        return;
     }
 
     if buttons.just_pressed(MouseButton::Left) || buttons.just_pressed(MouseButton::Right) {
@@ -94,20 +106,28 @@ pub fn send_on_gm_action(
             return;
         };
 
-        let gm_action_type: String = 
-        {
-            if buttons.just_pressed(MouseButton::Left) {"singleEntity".to_string()}
-            else {"entityCircle".to_string()}
+        let gm_action_type: String = {
+            if buttons.just_pressed(MouseButton::Left) {
+                "singleEntity".to_string()
+            } else {
+                "entityCircle".to_string()
+            }
         };
-        events.send(ScriptCallbackEvent::new_for_all(
-            OnGmAction,
-            vec![
-                ScriptValue::String(gm_action_type.into()),
-                ScriptValue::String("cruiser".to_string().into()),
-                ScriptValue::Integer(world_pos.x as i64),
-                ScriptValue::Integer(world_pos.y as i64),
-            ],
-        ));
+
+        if let (Some(category), Some(name)) = (
+            current_action.template_category.clone(),
+            current_action.template_name.clone(),
+        ) {
+            events.send(ScriptCallbackEvent::new_for_all(
+                OnGmAction,
+                vec![
+                    ScriptValue::String(gm_action_type.into()),
+                    ScriptValue::String(name.into()),
+                    ScriptValue::Integer(world_pos.x as i64),
+                    ScriptValue::Integer(world_pos.y as i64),
+                ],
+            ));
+        }
     }
 }
 
