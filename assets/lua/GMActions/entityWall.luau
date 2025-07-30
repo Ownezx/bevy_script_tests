@@ -10,7 +10,7 @@ function on_gm_action(name:string, template:string, x:number, y:number, angle:nu
         local base = simple[template]
         if not base then return end
 
-        local wall_width = math.max(1, math.floor(size / SPACING))
+        local wall_width = math.max(1, math.floor(size * 2 / SPACING))
         local wall_height = WALL_HEIGHT
 
         -- Calculate total width and height in world units

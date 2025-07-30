@@ -1,5 +1,4 @@
-use bevy::log::error;
-use bevy::log::info;
+use bevy::log::{error, info};
 use bevy::{prelude::*, window::PrimaryWindow};
 use bevy_egui::EguiContexts;
 use bevy_mod_scripting::core::bindings::FunctionCallContext;
@@ -13,6 +12,7 @@ use bevy_mod_scripting::{
     },
     lua::LuaScriptingPlugin,
 };
+use std::f32::consts::PI;
 use std::fs;
 use std::path::Path;
 
@@ -30,6 +30,14 @@ pub struct GMActions {
     pub command_list: Vec<String>,
 }
 
+// New resource to track drag state and positions
+#[derive(Resource, Default)]
+pub struct DragState {
+    pub dragging: bool,
+    pub start_pos: Option<Vec2>,
+    pub current_pos: Option<Vec2>,
+}
+
 callback_labels!(
     OnGmAction => "on_gm_action"
 );
@@ -40,10 +48,11 @@ impl Plugin for GMActionsManager {
     fn build(&self, app: &mut App) {
         app.init_resource::<GMActions>();
         app.init_resource::<GMCurrentAction>();
-        app.add_systems(Update, send_on_gm_action);
+        app.init_resource::<DragState>();
+        app.add_systems(Update, (track_drag_state, draw_gizmo));
         app.add_systems(
             Update,
-            event_handler::<OnGmAction, LuaScriptingPlugin>.after(send_on_gm_action),
+            event_handler::<OnGmAction, LuaScriptingPlugin>.after(track_drag_state),
         );
         app.add_systems(Startup, setup);
         let world = app.world_mut();
@@ -81,51 +90,109 @@ fn setup(
     }
 }
 
-pub fn send_on_gm_action(
-    mut egui_contexts: EguiContexts,
+/// Tracks dragging state and updates DragState resource with start and current positions
+fn track_drag_state(
     buttons: Res<ButtonInput<MouseButton>>,
     current_action: Res<GMCurrentAction>,
-    camera_query: Single<(&Camera, &GlobalTransform)>,
-    q_windows: Query<&Window, With<PrimaryWindow>>,
     mut events: EventWriter<ScriptCallbackEvent>,
+    windows: Query<&Window, With<PrimaryWindow>>,
+    camera_query: Query<(&Camera, &GlobalTransform)>,
+    mut egui_contexts: EguiContexts,
+    mut drag_state: ResMut<DragState>,
 ) {
-    let ctx = egui_contexts.ctx_mut();
-    if ctx.wants_pointer_input() || ctx.wants_keyboard_input() {
+    let window = windows.single();
+    let (camera, camera_transform) = camera_query.single();
+
+    if let Some(cursor_pos) = window.cursor_position() {
+        if buttons.just_pressed(MouseButton::Left) {
+            // Drag started
+            let ctx = egui_contexts.ctx_mut();
+            if ctx.wants_pointer_input() || ctx.wants_keyboard_input() {
+                return;
+            }
+        
+            if let Ok(world_pos) = camera.viewport_to_world_2d(camera_transform, cursor_pos) {
+                drag_state.dragging = true;
+                drag_state.start_pos = Some(world_pos);
+                drag_state.current_pos = Some(world_pos);
+            }
+        } else if buttons.pressed(MouseButton::Left) && drag_state.dragging {
+            // Drag ongoing
+            if let Ok(world_pos) = camera.viewport_to_world_2d(camera_transform, cursor_pos) {
+                drag_state.current_pos = Some(world_pos);
+            }
+        } else if buttons.just_released(MouseButton::Left) {
+            // Drag ended
+            if let (Some(start_pos), Some(stop_pos)) = (drag_state.start_pos, drag_state.current_pos)
+            {
+                send_on_gm_action(
+                    current_action,
+                    events,
+                    start_pos,
+                    (start_pos-stop_pos).to_angle()+PI/2.0,
+                    (start_pos-stop_pos).length()
+                )
+            }
+            drag_state.dragging = false;
+            drag_state.start_pos = None;
+            drag_state.current_pos = None;
+
+        }
+    }
+}
+
+/// Sends the gm_action event as before (unchanged logic except no egui context checks)
+pub fn send_on_gm_action(
+    current_action: Res<GMCurrentAction>,
+    mut events: EventWriter<ScriptCallbackEvent>,
+    pos: Vec2,
+    angle: f32,
+    size: f32,
+) {
+    let Some(command) = (*current_action).command.clone() else {return;};
+
+    if let (Some(category), Some(name)) = (
+        (*current_action).template_category.clone(),
+        current_action.template_name.clone(),
+    ) {
+        events.send(ScriptCallbackEvent::new_for_all(
+            OnGmAction,
+            vec![
+                ScriptValue::String(command.into()),
+                ScriptValue::String(name.into()),
+                ScriptValue::Float(pos.x.into()),
+                ScriptValue::Float(pos.y.into()),
+                ScriptValue::Float(angle.into()),
+                ScriptValue::Float(size.into()),
+            ],
+        ));
+    }
+}
+
+/// Draws a circle and a line gizmo showing drag size and direction
+fn draw_gizmo(
+    mut gizmos: Gizmos,
+    drag_state: Res<DragState>,
+) {
+    if !drag_state.dragging {
         return;
     }
 
-    if buttons.just_pressed(MouseButton::Left) || buttons.just_pressed(MouseButton::Right) {
-        let (camera, camera_transform) = *camera_query;
-        let window = q_windows.single();
+    let start = match drag_state.start_pos {
+        Some(pos) => pos,
+        None => return,
+    };
+    let current = match drag_state.current_pos {
+        Some(pos) => pos,
+        None => return,
+    };
 
-        let Some(cursor_position) = window.cursor_position() else {
-            return;
-        };
+    // Draw a circle at the start drag position with radius equal to drag distance
+    let radius = start.distance(current);
+    gizmos.circle(start.extend(0.0), radius, Color::WHITE);
 
-        // Calculate a world position based on the cursor's position.
-        let Ok(world_pos) = camera.viewport_to_world_2d(camera_transform, cursor_position) else {
-            return;
-        };
-
-        let Some(command) = (*current_action).command.clone() else {return;};
-
-        if let (Some(category), Some(name)) = (
-            (*current_action).template_category.clone(),
-            current_action.template_name.clone(),
-        ) {
-            events.send(ScriptCallbackEvent::new_for_all(
-                OnGmAction,
-                vec![
-                    ScriptValue::String(command.into()),
-                    ScriptValue::String(name.into()),
-                    ScriptValue::Integer(world_pos.x as i64),
-                    ScriptValue::Integer(world_pos.y as i64),
-                    ScriptValue::Float(3.0),
-                    ScriptValue::Float(400.0),
-                ],
-            ));
-        }
-    }
+    // Draw a line from start to current position
+    gizmos.line(start.extend(0.0), current.extend(0.0), Color::WHITE);
 }
 
 fn register_gm_function(ctx: FunctionCallContext, name: ScriptValue) {
