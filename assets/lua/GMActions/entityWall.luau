@@ -4,7 +4,7 @@ local simple = require("./../templates/FirstTemplates")
 local gm_action_name = "entityWall"
 local WALL_WIDTH = 5
 local WALL_HEIGHT = 2
-local SPACING = 100 -- distance between entities
+local SPACING = 100
 
 function on_gm_action(name:string, template:string, x:number, y:number)
     if name == gm_action_name then
