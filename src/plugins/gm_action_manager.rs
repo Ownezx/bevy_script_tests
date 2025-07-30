@@ -120,6 +120,8 @@ pub fn send_on_gm_action(
                     ScriptValue::String(name.into()),
                     ScriptValue::Integer(world_pos.x as i64),
                     ScriptValue::Integer(world_pos.y as i64),
+                    ScriptValue::Float(3.0),
+                    ScriptValue::Float(400.0),
                 ],
             ));
         }
