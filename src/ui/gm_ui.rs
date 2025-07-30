@@ -1,9 +1,9 @@
 use bevy::prelude::*;
-use bevy_egui::{egui, EguiContexts};
+use bevy_egui::{EguiContexts, egui};
 
 use crate::plugins::{
     database_manager::GameDatabase,
-    gm_action_manager::{GMCurrentAction, GMActions},
+    gm_action_manager::{GMActions, GMCurrentAction},
 };
 
 pub struct GmUi;
@@ -46,10 +46,7 @@ fn draw_button_grid(
             // Tabs
             ui.horizontal_wrapped(|ui| {
                 for category in db.templates.keys() {
-                    let selected = selected_tab
-                        .name
-                        .as_ref()
-                        .map_or(false, |n| n == category);
+                    let selected = selected_tab.name.as_ref().map_or(false, |n| n == category);
                     if ui.selectable_label(selected, category).clicked() {
                         selected_tab.name = Some(category.clone());
                     }
@@ -67,19 +64,22 @@ fn draw_button_grid(
                         .spacing([4.0, 4.0])
                         .min_col_width(button_size.x)
                         .show(ui, |ui| {
-                            for row in 0..3 {
+                            for row in 0..2 {
                                 for col in 0..3 {
                                     let idx = row * 3 + col;
                                     if let Some(template) = templates.get(idx) {
                                         if ui
-                                            .add_sized(button_size, egui::Button::new(&template.name))
+                                            .add_sized(
+                                                button_size,
+                                                egui::Button::new(&template.name),
+                                            )
                                             .clicked()
                                         {
-                                            current_action.template_category = Some(tab_name.clone());
-                                            current_action.template_name = Some(template.name.clone());
-                                            info!(
-                                                tab_name, template.name
-                                            );
+                                            current_action.template_category =
+                                                Some(tab_name.clone());
+                                            current_action.template_name =
+                                                Some(template.name.clone());
+                                            info!(tab_name, template.name);
                                         }
                                     } else {
                                         ui.add_sized(button_size, egui::Label::new(""));
@@ -94,24 +94,27 @@ fn draw_button_grid(
             ui.add_space(8.0);
             ui.separator();
 
-            // Command grid (3x1)
+            // Command grid (3x2)
             egui::Grid::new("command_grid")
                 .spacing([4.0, 4.0])
                 .min_col_width(button_size.x)
                 .show(ui, |ui| {
-                    for i in 0..3 {
-                        if let Some(command) = actions.command_list.get(i) {
-                            if ui
-                                .add_sized(button_size, egui::Button::new(command))
-                                .clicked()
-                            {
-                                current_action.command = Some(command.clone());
+                    for row in 0..2 {
+                        for col in 0..3 {
+                            let i = row * 3 + col;
+                            if let Some(command) = actions.command_list.get(i) {
+                                if ui
+                                    .add_sized(button_size, egui::Button::new(command))
+                                    .clicked()
+                                {
+                                    current_action.command = Some(command.clone());
+                                }
+                            } else {
+                                ui.add_sized(button_size, egui::Label::new(""));
                             }
-                        } else {
-                            ui.add_sized(button_size, egui::Label::new(""));
                         }
+                        ui.end_row();
                     }
-                    ui.end_row();
                 });
         });
 }
