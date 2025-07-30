@@ -32,7 +32,7 @@ function on_gm_action(name:string, template:string, x:number, y:number, angle:nu
 
             if not too_close then
                 table.insert(placed, {spawn_x, spawn_y})
-                Template.spawnTemplate(simple[template], spawn_x, spawn_y, angle + local_angle - math.pi / 2)
+                Template.spawnTemplate(simple[template], spawn_x, spawn_y, math.random() * 2 * math.pi)
             end
 
             attempts = attempts + 1
